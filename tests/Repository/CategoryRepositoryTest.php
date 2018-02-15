@@ -31,17 +31,6 @@ class CategoryRepositoryTest extends KernelTestCase
 
     public function testNewCategory()
     {
-
-
-        $vegetables = $this->em->getRepository('App:Category')->findOneBy(["name" => "Foodd"]);
-        /** @var Category */
-        $vegetables->setName('Food');
-        $this->em->persist($vegetables);
-        $this->em->flush();
-
-
-        /*
-
         $food = new Category();
         $food->setName('Food');
 
@@ -63,15 +52,29 @@ class CategoryRepositoryTest extends KernelTestCase
         $this->em->persist($carrots);
         $this->em->flush();
 
-        */
-        //$category = new Category();
-        //$vegetables->setName('Test');
-        //$this->em->persist($vegetables);
-        //$category->setParent($parentCategory);
 
-        //$this->em->persist($category);
-        //$this->em->flush();
-        //$this->em->refresh($category);
+        /** @var Category $carrots */
+        $food = $this->em->getRepository('App:Category')->findOneBy(["name" => "Food"]);
+        $carrots = $this->em->getRepository('App:Category')->findOneBy(["name" => "Carrots"]);
+        $vegetables = $this->em->getRepository('App:Category')->findOneBy(["name" => "Vegetables"]);
+
+
+        $this->assertEquals('Food', $food->getPath());
+        $this->assertEquals('Food\\Vegetables\\Carrots', $carrots->getPath());
+        $this->assertEquals('Food\\Vegetables', $vegetables->getPath());
+
+        /** @var Category */
+        $food->setName('New Food Name');
+        $this->em->persist($food);
+        $this->em->flush();
+
+        $food = $this->em->getRepository('App:Category')->findOneBy(["name" => "New Food Name"]);
+        $carrots = $this->em->getRepository('App:Category')->findOneBy(["name" => "Carrots"]);
+        $vegetables = $this->em->getRepository('App:Category')->findOneBy(["name" => "Vegetables"]);
+
+        $this->assertEquals('New Food Name', $food->getPath());
+        $this->assertEquals('New Food Name\\Vegetables\\Carrots', $carrots->getPath());
+        $this->assertEquals('New Food Name\\Vegetables', $vegetables->getPath());
     }
 
     /**
